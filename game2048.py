@@ -3,11 +3,17 @@ import numpy as np
 
 class Board():
     def __init__(self, size):
+        self.status = 0 # 0 means still playing, -1 means lose, 1 means victory
         self.size = size
         self.board = [[0 for _ in range(size)] for _ in range(size)]
         self.startGame()
     
     def addRandom(self):
+        # if no empty square left, then skip
+        tmp = np.array(self.board).flatten()
+        if 0 not in tmp.tolist():
+            return
+
         row, col = -1, -1
         while row == -1 or self.board[row][col] != 0:
             row = random.randint(0,self.size-1)
@@ -15,7 +21,6 @@ class Board():
         self.board[row][col] = 2
     
     def printBoard(self):
-
         for r in self.board:
             for c in r:
                 print(c, end = " ")
@@ -33,24 +38,37 @@ class Board():
         print("\tx: exit the game")
         print()
         
-        # Init game, starting with 2 random squares
+        # Init game, starting with 2 random squares of 2s
         self.addRandom()
         self.addRandom()
-
         self.printBoard()
-        command = ''
-        while command != 'x':
+        while True:
             command = input("Command: ")
             if command in ('a','d','w','s'):
+                tmp = [x[:] for x in self.board]
                 self.swipe(command)
-                self.addRandom()
+                if tmp == self.board: # no more move in this direction
+                    print("No possible move in this direction!")
+                    print()
+                else:
+                    self.addRandom()
                 self.printBoard()
+
+                # Check output after swiping
+                if self.status == 1:
+                    print("Victory!Good game well play!")
+                    break
+                if self.gameOver() == True:
+                    print("Game over! No more possible move!")
+                    break
+                
+
             elif command == 'x':
                 print("Game ends. See you again!")
+                quit()
             else:
                 print('Invalid input!')
-        
-
+        self.restart()
         
     def swipe(self, dir):
         if dir == 'a':
@@ -87,5 +105,31 @@ class Board():
                 else:
                     mtx[k][i1] = mtx[k][i1]*2
                     mtx[k][i2] = 0
-                    i1 = None    
+                    if mtx[k][i1] == 2048:
+                        self.status = 1 # victory
+                    i1 = None       
         return mtx
+    
+
+    def gameOver(self):
+        for r in range(self.size):
+            for c in range(self.size):
+                if (self.board[r][c] == 0 or
+                   (r-1 >= 0 and self.board[r][c] == self.board[r-1][c]) or
+                   (r+1 < self.size and self.board[r][c] == self.board[r+1][c]) or
+                   (c-1 >= 0 and self.board[r][c] == self.board[r][c-1]) or
+                   (c+1 < self.size and self.board[r][c] == self.board[r][c+1])):
+                   return False # not over yet
+        self.status = -1
+        return True
+    
+    def restart(self):
+        i = input('Do you want to play again (y/n)?')
+        while i != 'y' and i!= 'n':
+            print('Invalid input!')
+            i = input('Do you want to play again (y/n)?')
+        if i == 'y':
+            self.__init__(self.size)
+        else:
+            print("Game ends. See you again!")
+            quit() # Quit the program
