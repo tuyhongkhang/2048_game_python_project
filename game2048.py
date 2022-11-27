@@ -2,10 +2,14 @@ import random
 import numpy as np
 
 class Board():
-    def __init__(self, size):
+    def __init__(self):
+        print("_______Welcome to 2048_______")
+        try:
+            self.size = int(input("Enter size of your board (default 4): "))
+        except:
+            self.size = 4
         self.status = 0 # 0 means still playing, -1 means lose, 1 means victory
-        self.size = size
-        self.board = [[0 for _ in range(size)] for _ in range(size)]
+        self.board = [[0 for _ in range(self.size)] for _ in range(self.size)]
         self.startGame()
     
     def addRandom(self):
@@ -29,7 +33,6 @@ class Board():
     
     def startGame(self):
         # print out valid commands
-        print("_______Welcome to 2048_______")
         print("Here are the valid commands:")
         print("\ta: swipe left")
         print("\td: swipe right")
@@ -129,7 +132,7 @@ class Board():
             print('Invalid input!')
             i = input('Do you want to play again (y/n)?')
         if i == 'y':
-            self.__init__(self.size)
+            self.__init__()
         else:
             print("Game ends. See you again!")
             quit() # Quit the program
