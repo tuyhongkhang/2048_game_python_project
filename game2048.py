@@ -57,36 +57,35 @@ class Board():
             mtx = self.shiftAndSum(self.board)
             self.board = mtx
         elif dir == 'd':
-            mtx = self.shiftAndSum(np.fliplr(self.board))
-            self.board = np.fliplr(mtx) # flip back
+            mtx = self.shiftAndSum(np.fliplr(self.board).tolist())
+            self.board = np.fliplr(mtx).tolist() # flip back
         elif dir == 'w':
-            mtx = self.shiftAndSum(np.transpose(self.board))
-            self.board = np.transpose(mtx)
+            mtx = self.shiftAndSum(np.transpose(self.board).tolist())
+            self.board = np.transpose(mtx).tolist()
         elif dir == 's':
             tmp = np.transpose(self.board)
-            mtx = self.shiftAndSum(np.fliplr(tmp))
+            mtx = self.shiftAndSum(np.fliplr(tmp).tolist())
             mtx = np.fliplr(mtx)
-            self.board = np.transpose(mtx)
+            self.board = np.transpose(mtx).tolist()
             
     def shiftAndSum(self, mtx):
-        for arr in mtx:
+        for k in range(len(mtx)):
             i1 = None
-            for i2 in range(self.size):
-                if arr[i2] == 0:
+            for i2 in range(len(mtx)):
+                if mtx[k][i2] == 0:
                     continue
-                if i1 is None or arr[i1] != arr[i2]:
+                if i1 is None or mtx[k][i1] != mtx[k][i2]:
                     try:
-                        x = arr.index(0)
+                        x = mtx[k].index(0)
                     except:
                         x = i2
                     tmp = i2 if i2 <= x else x
-                    val = arr[i2]
-                    arr[i2] = 0
-                    arr[tmp] = val
+                    val = mtx[k][i2]
+                    mtx[k][i2] = 0
+                    mtx[k][tmp] = val
                     i1 = tmp
                 else:
-                    arr[i1] = arr[i1]*2
-                    arr[i2] = 0
-                    i1 = None
-        print("*",mtx)
+                    mtx[k][i1] = mtx[k][i1]*2
+                    mtx[k][i2] = 0
+                    i1 = None    
         return mtx
