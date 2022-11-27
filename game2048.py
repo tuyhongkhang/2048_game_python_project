@@ -30,7 +30,7 @@ class Board():
     def printBoard(self):
         for r in self.board:
             for c in r:
-                print(c, end = " ")
+                print(str(c).rjust(4), end=" ") # right padding to look better
             print()
         print()
     
